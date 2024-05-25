@@ -7,7 +7,7 @@ library(shinydashboard)
 
 # Define UI
 ui <- dashboardPage(
-  dashboardHeader(title = "TimeVista" , tags$li(a(href="#", tags$span("Dashboard", class="logo", style="background-color: #337ab7; color: #FFFFFF;")))),
+  dashboardHeader(title = "TimeVista"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
@@ -34,7 +34,7 @@ ui <- dashboardPage(
     ),
     tabItems(
       tabItem(tabName = "upload",
-              fileInput("file1", "Choose File (Optional)",
+              fileInput("file1", "Choose  File (Optional)",
                         accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv")),
               checkboxInput("header", "Header", TRUE),
               radioButtons("sep", "Separator",
@@ -99,42 +99,42 @@ ui <- dashboardPage(
                 column(12, align = "center",
                        downloadButton("downloadDashboard", "Download Dashboard", icon = icon("download"))
                 )
+              )
+      ),
+      tabItem(tabName = "help",
+              fluidRow(
+                box(
+                  title = "Help",
+                  h4("About the App"),
+                  p("This Time Series Analysis application allows users to upload a CSV file or select from built-in datasets to perform various types of time series analysis including data exploration, decomposition, SARIMA modeling, diagnostics, and forecasting."),
+                  h4("How to Use the App"),
+                  tags$ol(
+                    tags$li("Navigate to the 'Dataset' tab to upload your CSV file or select a built-in dataset."),
+                    tags$li("Use the 'Data Exploration' tab to visualize the time series and view summary statistics."),
+                    tags$li("In the 'Decomposition' tab, view the seasonal decomposition of the time series."),
+                    tags$li("Use the 'SARIMA Model' tab to fit and view the summary of a SARIMA model."),
+                    tags$li("The 'Diagnostics' tab provides diagnostic plots for the fitted SARIMA model."),
+                    tags$li("In the 'Forecasting' tab, specify the forecast horizon and view the forecast plot."),
+                    tags$li("The 'Dashboard' tab combines decomposition, SARIMA model summary, and forecasting plots.")
+                  ),
+                  h4("Known Drawbacks"),
+                  tags$ul(
+                    tags$li("The app might not handle very large datasets efficiently."),
+                    tags$li("Only supports univariate time series analysis."),
+                    tags$li("Limited options for customizing plots."),
+                    tags$li("The app searchs for SARIMA models using function 'auto.arima' which won't be the best model all the time")
+                  ),
+                  width = 12
                 )
-              ),
-            tabItem(tabName = "help",
-                      fluidRow(
-                        box(
-                          title = "Help",
-                          h4("About the App"),
-                          p("This Time Series Analysis application allows users to upload a CSV file or select from built-in datasets to perform various types of time series analysis including data exploration, decomposition, SARIMA modeling, diagnostics, and forecasting."),
-                          h4("How to Use the App"),
-                          tags$ol(
-                            tags$li("Navigate to the 'Dataset' tab to upload your CSV file or select a built-in dataset."),
-                            tags$li("Use the 'Data Exploration' tab to visualize the time series and view summary statistics."),
-                            tags$li("In the 'Decomposition' tab, view the seasonal decomposition of the time series."),
-                            tags$li("Use the 'SARIMA Model' tab to fit and view the summary of a SARIMA model."),
-                            tags$li("The 'Diagnostics' tab provides diagnostic plots for the fitted SARIMA model."),
-                            tags$li("In the 'Forecasting' tab, specify the forecast horizon and view the forecast plot."),
-                            tags$li("The 'Dashboard' tab combines decomposition, SARIMA model summary, and forecasting plots.")
-                          ),
-                          h4("Known Drawbacks"),
-                          tags$ul(
-                            tags$li("The app might not handle very large datasets efficiently."),
-                            tags$li("Only supports univariate time series analysis."),
-                            tags$li("Limited options for customizing plots."),
-                            tags$li("The app searchs for SARIMA models using function 'auto.arima' which won't be the best model all the time")
-                          ),
-                          width = 12
-                        )
-                      )
               )
       )
     )
   )
+)
+
 
 # Define server logic
 server <- function(input, output, session) {
-  
   # Reactive expression for storing the loaded data
   loadedData <- reactiveVal(NULL)
   
