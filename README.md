@@ -1,4 +1,4 @@
-# TimeVista Shiny App
+# TimeVista Shiny App for time series anlysis
 ## Overview
 TimeVista is a Shiny application designed for time series analysis. It allows users to upload their own CSV files or select from built-in datasets to perform various types of time series analysis including data exploration, decomposition, SARIMA modeling, diagnostics, and forecasting.
 
