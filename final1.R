@@ -200,8 +200,11 @@ server <- function(input, output, session) {
   # Render time series plot
   output$tsPlot <- renderPlot({
     req(tsData())
-    autoplot(tsData()) + ggtitle("Time Series Plot") + theme_minimal()
+    autoplot(tsData()) + ggtitle("Time Series Plot") +
+      theme_minimal() +
+      theme(text = element_text(size = 12), axis.text.x = element_text(angle = 45, hjust = 1))
   })
+  
   
   # Render summary of time series
   output$summary <- renderPrint({
@@ -214,7 +217,9 @@ server <- function(input, output, session) {
   output$decompPlot <- renderPlot({
     req(tsData())
     ts_decomp <- decompose(tsData())
-    autoplot(ts_decomp) + ggtitle("Decomposition Plot") + theme_minimal()
+    autoplot(ts_decomp) + ggtitle("Decomposition Plot") +
+      theme_minimal() +
+      theme(text = element_text(size = 12))
   })
   
   # Render SARIMA model summary
@@ -236,7 +241,9 @@ server <- function(input, output, session) {
     req(tsData(), input$h)
     fit <- auto.arima(tsData())
     forecasted <- forecast(fit, h = input$h)
-    autoplot(forecasted) + ggtitle("Forecast Plot") + theme_minimal()
+    autoplot(forecasted) + ggtitle("Forecast Plot") +
+      theme_minimal() +
+      theme(text = element_text(size = 12))
   })
   
   # Render decomposition plot for dashboard
