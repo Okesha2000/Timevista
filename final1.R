@@ -55,15 +55,18 @@ ui <- dashboardPage(
       tabItem(tabName = "exploration",
               plotOutput("tsPlot"),
               verbatimTextOutput("summary"),
+              uiOutput("tsPlotEquation"),
               downloadButton("downloadTsPlot", "Download Time Series Plot", icon = icon("download")),
               downloadButton("downloadSummary", "Download Summary", icon = icon("download"))
       ),
       tabItem(tabName = "decomposition",
               plotOutput("decompPlot"),
+              uiOutput("decompEquation"),
               downloadButton("downloadDecompPlot", "Download Decomposition Plot", icon = icon("download"))
       ),
       tabItem(tabName = "sarima",
               verbatimTextOutput("sarimaModel"),
+              uiOutput("sarimaEquation"),
               downloadButton("downloadSARIMAModel", "Download SARIMA Model", icon = icon("download"))
       ),
       tabItem(tabName = "diagnostics",
@@ -73,6 +76,7 @@ ui <- dashboardPage(
       tabItem(tabName = "forecasting",
               numericInput("h", "Forecast Horizon (periods):", 12),
               plotOutput("forecastPlot"),
+              uiOutput("forecastEquation"),
               downloadButton("downloadForecastPlot", "Download Forecast Plot", icon = icon("download"))
       ),
       tabItem(tabName = "dashboard",
@@ -205,6 +209,13 @@ server <- function(input, output, session) {
       theme(text = element_text(size = 12), axis.text.x = element_text(angle = 45, hjust = 1))
   })
   
+  # Render time series plot equation
+  output$tsPlotEquation <- renderUI({
+    req(tsData())
+    withMathJax(
+      helpText('The time series plot is displayed using the equation: $$Y_t = \\text{data}[t]$$ where \\( Y_t \\) represents the time series data at time \\( t \\).')
+    )
+  })
   
   # Render summary of time series
   output$summary <- renderPrint({
@@ -222,11 +233,30 @@ server <- function(input, output, session) {
       theme(text = element_text(size = 12))
   })
   
+  # Render decomposition equation
+  output$decompEquation <- renderUI({
+    req(tsData())
+    withMathJax(
+      helpText('The decomposition plot displays the following components:
+                $$Y_t = T_t + S_t + R_t$$ 
+                where \\( Y_t \\) is the observed time series, \\( T_t \\) is the trend component, \\( S_t \\) is the seasonal component, and \\( R_t \\) is the residual component.')
+    )
+  })
+  
   # Render SARIMA model summary
   output$sarimaModel <- renderPrint({
     req(tsData())
     fit <- auto.arima(tsData())
     summary(fit)
+  })
+  
+  # Render SARIMA model equation
+  output$sarimaEquation <- renderUI({
+    req(tsData())
+    fit <- auto.arima(tsData())
+    withMathJax(
+      helpText(paste('The SARIMA model fitted is: $$ARIMA(', fit$arma[1], ', ', fit$arma[6], ', ', fit$arma[2], ') \\times (', fit$arma[3], ', ', fit$arma[7], ', ', fit$arma[4], ')_{', fit$arma[5], '}$$'))
+    )
   })
   
   # Render diagnostics plot for SARIMA model
@@ -244,6 +274,16 @@ server <- function(input, output, session) {
     autoplot(forecasted) + ggtitle("Forecast Plot") +
       theme_minimal() +
       theme(text = element_text(size = 12))
+  })
+  
+  # Render forecast equation
+  output$forecastEquation <- renderUI({
+    req(tsData(), input$h)
+    fit <- auto.arima(tsData())
+    forecasted <- forecast(fit, h = input$h)
+    withMathJax(
+      helpText(paste('The forecast is made using the SARIMA model: $$ARIMA(', fit$arma[1], ', ', fit$arma[6], ', ', fit$arma[2], ') \\times (', fit$arma[3], ', ', fit$arma[7], ', ', fit$arma[4], ')_{', fit$arma[5], '}$$'))
+    )
   })
   
   # Render decomposition plot for dashboard
